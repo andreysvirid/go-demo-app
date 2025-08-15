@@ -4,22 +4,25 @@ kind: Namespace
 metadata:
   name: demo
 ---
+# ServiceAccount для Ambassador
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: ambassador
   namespace: demo
 ---
+# ServiceAccount для Kubewatch
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: kubewatch
   namespace: demo
 ---
+# ClusterRoleBinding для Ambassador (чтение namespace)
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: ambassador-namespace-read
+  name: ambassador-namespace-view
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -29,10 +32,11 @@ subjects:
   name: ambassador
   namespace: demo
 ---
+# ClusterRoleBinding для Kubewatch (чтение namespace)
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: kubewatch-namespace-read
+  name: kubewatch-namespace-view
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -42,6 +46,7 @@ subjects:
   name: kubewatch
   namespace: demo
 ---
+# Deployment Ambassador
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -58,8 +63,6 @@ spec:
         app: ambassador
     spec:
       serviceAccountName: ambassador
-      securityContext:
-        fsGroup: 2000
       containers:
       - name: ambassador
         image: quay.io/datawire/ambassador:3.2.0
@@ -77,6 +80,7 @@ spec:
       - name: ambassador-config
         emptyDir: {}
 ---
+# Deployment Kubewatch
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -102,4 +106,3 @@ spec:
         env:
           - name: KUBEWATCH_NAMESPACE
             value: demo
-        resources: {}

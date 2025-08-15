@@ -1,4 +1,4 @@
-kubectl patch deployment ambassador -n demo2 --type='merge' -p '{
+kubectl patch deployment ambassador -n demo --type='merge' -p '{
   "spec": {
     "template": {
       "spec": {
