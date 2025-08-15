@@ -76,6 +76,4 @@ spec:
             initialDelaySeconds: 10
             periodSeconds: 10
           securityContext:
-            runAsUser: 8877
-            runAsGroup: 8877
             allowPrivilegeEscalation: false
