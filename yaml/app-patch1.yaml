@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ambassador
+  labels:
+    app: ambassador
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ambassador
+  template:
+    metadata:
+      labels:
+        app: ambassador
+    spec:
+      serviceAccountName: ambassador
+      containers:
+        - name: ambassador
+          image: datawire/ambassador:2.0.0
+          command: ["/bin/sh", "-c"]
+          args:
+            - "ulimit -n 65536 && exec ambassador"
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          livenessProbe:
+            httpGet:
+              path: /ambassador/v0/check_alive
+              port: 8877
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ambassador/v0/check_ready
+              port: 8877
+            initialDelaySeconds: 10
+            periodSeconds: 10
